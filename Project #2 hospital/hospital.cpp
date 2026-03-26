@@ -1,8 +1,54 @@
 #include<iostream>
+#include<string>
 using namespace std;
-bool AddPatient()
+
+const int QUEUE = 5;
+const int SPECILIZATION = 5;
+string names[SPECILIZATION+1][QUEUE];
+int statiss[SPECILIZATION+1][QUEUE];
+
+int added[SPECILIZATION+1]{};
+
+void right_shift(int spec,string names[],int statiss[])
 {
+    int size = added[spec];
+
+    for(int i = size -1; i>=0 ; i--)
+    {
+        names[i+1] = names[i];
+        statiss[i+1] = statiss[i];
+    }
+    added[spec]++;
+}
+void AddPatient()
+{
+    int spec;
+    string name;
+    int statis;
+    cout<<"Enter specialization, name, statis:\n";
+    cin>>spec>>name>>statis;
+
     
+    if(added[spec] < QUEUE)
+    {
+        if(statis == 0)
+        {
+            names[spec][added[spec]] = name;
+            statiss[spec][added[spec]] = statis;
+
+            added[spec]++;
+        }
+        else
+        {
+            right_shift(spec,names[spec],statiss[spec]);  
+            names[spec][0] = name;
+            statiss[spec][0] = statis;
+        }
+    }
+    else{
+        cout<<"Sorry we can not add more patients for this specialization\n";
+        return;
+    }
 }
 void PrintAllPatients()
 {
