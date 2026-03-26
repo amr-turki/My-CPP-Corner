@@ -18,7 +18,6 @@ void right_shift(int spec,string names[],int statiss[])
         names[i+1] = names[i];
         statiss[i+1] = statiss[i];
     }
-    added[spec]++;
 }
 void AddPatient()
 {
@@ -28,15 +27,41 @@ void AddPatient()
     cout<<"Enter specialization, name, statis:\n";
     cin>>spec>>name>>statis;
 
+     if (!(spec>=1 && spec<=5)) 
+    {
+        cout<<"Invalid input. Specialization must be in the range [1-5].\n";
+        cout<<"Again\n";
+
+        spec = -1;
+         while(spec == -1)
+         {
+            cout<<"Enter specilization: ";
+
+            cin>>spec;
+
+            if (!(spec>=1 && spec<=5)) 
+            {
+                cout<<"Invalid input. Specialization must be in the range [1-5].\n";
+                cout<<"Again\n";
+
+                spec = -1;
+            }
+         }
+        
+    }
+   
     
     if(added[spec] < QUEUE)
     {
-        if(statis == 0)
+        if(added[spec] == 0)
+        {
+            names[spec][0] = name;
+            statiss[spec][0] = statis;
+        }
+        else if(statis == 0)
         {
             names[spec][added[spec]] = name;
             statiss[spec][added[spec]] = statis;
-
-            added[spec]++;
         }
         else
         {
@@ -44,6 +69,8 @@ void AddPatient()
             names[spec][0] = name;
             statiss[spec][0] = statis;
         }
+
+        added[spec]++;
     }
     else{
         cout<<"Sorry we can not add more patients for this specialization\n";
@@ -55,7 +82,7 @@ void PrintAllPatients()
    
     for(int spec = 1;spec<=SPECILIZATION;spec++)
     {
-        if(added[spec])
+        if(added[spec] >= 1)
         {
             cout<<"There are "<<added[spec]<<" patients in specilization "<<spec<<"\n";
             for(int queue = 0;queue<added[spec];queue++)
@@ -89,9 +116,21 @@ void left_shift(int spec,string names[],int statiss[])
 }
 void GetNextPatient()
 {
-    int spec;
-    cout<<"Enter specilization: ";
-    cin>>spec;
+    int spec = -1;
+    while(spec == -1)
+    {
+        cout<<"Enter specilization: ";
+
+        cin>>spec;
+
+        if (!(spec>=1 && spec<=5)) 
+        {
+            cout<<"Invalid input. Specialization must be in the range [1-5].\n";
+            cout<<"Again\n";
+
+            spec = -1;
+        }
+    }
 
     if(added[spec]<1)
     {
@@ -99,7 +138,7 @@ void GetNextPatient()
         return;
     }
 
-    cout<<names[spec][added[spec]]<<"please go with the Dr\n";
+    cout<<names[spec][0]<<" please go with the Dr\n";
     left_shift(spec,names[spec],statiss[spec]);
 
 }
@@ -118,7 +157,7 @@ int menu() {
         if (!(choice>=1 && choice<=4)) 
         {
             cout<<"Invalid choice\n";
-            cout<<'Again\n';
+            cout<<"Again\n";
 
             choice = -1;
         }
