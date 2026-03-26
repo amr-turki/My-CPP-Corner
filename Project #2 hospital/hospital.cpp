@@ -75,8 +75,32 @@ void PrintAllPatients()
         
     }
 }
-bool GetNextPatient()
+
+void left_shift(int spec,string names[],int statiss[])
 {
+    int size = added[spec];
+
+    for(int i = 1; i<size ; i++)
+    {
+        names[i-1] = names[i];
+        statiss[i-1] = statiss[i];
+    }
+    added[spec]--;
+}
+void GetNextPatient()
+{
+    int spec;
+    cout<<"Enter specilization: ";
+    cin>>spec;
+
+    if(added[spec]<1)
+    {
+        cout<<"No patients at the moment. Have rest, Dr\n";
+        return;
+    }
+
+    cout<<names[spec][added[spec]]<<"please go with the Dr\n";
+    left_shift(spec,names[spec],statiss[spec]);
 
 }
 int menu() {
