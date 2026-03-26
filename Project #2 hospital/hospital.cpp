@@ -52,7 +52,28 @@ void AddPatient()
 }
 void PrintAllPatients()
 {
+   
+    for(int spec = 1;spec<=SPECILIZATION;spec++)
+    {
+        if(added[spec])
+        {
+            cout<<"There are "<<added[spec]<<" patients in specilization "<<spec<<"\n";
+            for(int queue = 0;queue<added[spec];queue++)
+                {
+                    cout<<names[spec][queue]<<" ";
+                    if(statiss[spec][queue] == 0)
+                    {
+                        cout<<"Regular\n";
+                    }
+                    else
+                    {
+                        cout<<"Urgent\n";
+                    }
 
+                }
+        }
+        
+    }
 }
 bool GetNextPatient()
 {
