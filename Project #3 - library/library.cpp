@@ -8,11 +8,16 @@ const int MAX_USERS = 5;
 
 struct Book {
     int id;
-    int name;
+    string name;
     int total_borrowed;
     int total_quantity;
 
     vector<string> borrowed_names;
+
+    Book()
+    {
+        total_borrowed = 0;
+    }
 };
 
 struct User {
@@ -51,7 +56,16 @@ struct Library
     void print_who_borrowed_book_by_name() {}
     void print_library_by_id() {}
     void print_library_by_name() {}
-    void add_user() {}
+    void add_user() {
+        if (added_users >= MAX_USERS) {
+            cout << "Added user exceeds maximum number of users";
+            return;
+        }
+
+        cout<<"Enter user name & national id:";
+        cin>>users[added_users].name>>users[added_users].national_id;
+        added_users++;
+    }
     void user_borrow_book() {}
     void user_return_book() {}
     void print_users() {}
