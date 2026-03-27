@@ -3,6 +3,9 @@
 #include<string>
 using namespace std;
 
+const int MAX_BOOKS = 10;
+const int MAX_USERS = 5;
+
 struct Book {
     int id;
     int name;
@@ -20,7 +23,30 @@ struct User {
 
 struct Library
 {
-    void add_book() {}
+    Book books[MAX_BOOKS];
+    User users[MAX_USERS];
+    int added_books ;
+    int added_users ;
+
+    Library() {
+        added_books = 0;
+        added_users = 0;
+    }
+
+
+    void add_book() {
+        if (added_books >= MAX_BOOKS) {
+            cout << "Added book exceeds maximum number of books";
+            return;
+        }
+
+        string name;
+        int id;
+        int total_quantity;
+        cout<<"Enter book info: id & name & total quantity:\n";
+        cin>>books[added_books].id>>books[added_books].name>>books[added_books].total_quantity;
+        added_books++;
+    }
     void search_books_by_prefix() {}
     void print_who_borrowed_book_by_name() {}
     void print_library_by_id() {}
