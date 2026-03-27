@@ -20,9 +20,24 @@ struct Book {
     {
         total_borrowed = 0;
     }
+
+    bool borrrow(string user_name) {
+        if (total_borrowed == total_quantity) {
+            cout<<"Sorry, no available copies for this book at the moment.\n";
+            return false;
+        }
+        borrowed_names.push_back(user_name);
+
+        total_borrowed++;
+      
+
+        return true;
+    }
+
     void print() {
         cout << "id = " << id<< " name = " << name << " total_quantity " << total_quantity<< " total_borrowed " << total_borrowed << "\n";   
     }
+
 };
 
 bool comp_by_id(const Book &b1, const Book &b2) {
@@ -39,6 +54,10 @@ struct User {
     string name;
     int national_id;
     vector<int> borrowed_bookes_id;
+
+    void borrow(int book_id) {
+        borrowed_bookes_id.push_back(book_id);
+    }
 };
 
 struct Library
@@ -70,7 +89,7 @@ struct Library
     void search_books_by_prefix() {}
     void print_who_borrowed_book_by_name() {}
 
-    
+
     void print_library_by_id() {
         sort(books,books+added_books,comp_by_id);
         for (int i = 0;i<added_books;i++) {
@@ -97,7 +116,61 @@ struct Library
         cin>>users[added_users].name>>users[added_users].national_id;
         added_users++;
     }
-    void user_borrow_book() {}
+
+    bool user_exists(string user_name) {
+        for (int i = 0;i<added_users;i++) {
+            if (users[i].name == user_name) {
+                return true;
+            }
+        }
+        return false;
+    }
+    bool book_exists(string book_name) {
+        for (int i = 0;i<added_books;i++) {
+            if (books[i].name == book_name) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    void user_borrow_book() {
+        cout<<"Enter user name and book name:\n";
+        string user_name,book_name;
+        cin>>user_name>>book_name;
+
+        if (book_exists(book_name) && user_exists(user_name)) {
+
+            bool status = false;
+            int book_id;
+            for (int i = 0;i<added_books;i++) {
+                if (books[i].name == book_name) {
+                    status = books[i].borrrow(user_name);
+                    book_id = books[i].id;
+                    break;
+                }
+            }
+            if (status) {
+                for (int i = 0;i<added_users;i++) {
+                    if (users[i].name == user_name) {
+                        users[i].borrow(book_id);
+                        break;
+                    }
+                }
+            }
+
+
+        }
+        else if (user_exists(user_name) == false) {
+            cout<<"Sorry User is not exists\n";
+        }
+        else if (book_exists(book_name) == false) {
+            cout<<"Sorry Book is not exists\n";
+        }
+
+        
+    }
     void user_return_book() {}
     void print_users() {}
 
