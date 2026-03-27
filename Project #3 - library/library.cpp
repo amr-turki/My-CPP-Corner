@@ -29,6 +29,10 @@ bool comp_by_id(const Book &b1, const Book &b2) {
     return b1.id < b2.id;
 }
 
+bool comp_by_name(const Book &b1, const Book &b2) {
+    return b1.name < b2.name;
+}
+
 
 
 struct User {
@@ -65,13 +69,24 @@ struct Library
     }
     void search_books_by_prefix() {}
     void print_who_borrowed_book_by_name() {}
+
+    
     void print_library_by_id() {
         sort(books,books+added_books,comp_by_id);
         for (int i = 0;i<added_books;i++) {
             books[i].print();
         }
     }
-    void print_library_by_name() {}
+
+
+    void print_library_by_name() {
+        sort(books,books+added_books,comp_by_name);
+        for (int i = 0;i<added_books;i++) {
+            books[i].print();
+        }
+    }
+
+
     void add_user() {
         if (added_users >= MAX_USERS) {
             cout << "Added user exceeds maximum number of users";
