@@ -12,6 +12,11 @@ struct Book {
     vector<string> borrowed_names;
 };
 
+struct User {
+    string name;
+    int national_id;
+    vector<int> borrowed_bookes_id;
+};
 
 struct Library
 {
