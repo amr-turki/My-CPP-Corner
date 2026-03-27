@@ -3,6 +3,17 @@ using namespace std;
 
 struct Library
 {
+    void add_book() {}
+    void search_books_by_prefix() {}
+    void print_who_borrowed_book_by_name() {}
+    void print_library_by_id() {}
+    void print_library_by_name() {}
+    void add_user() {}
+    void user_borrow_book() {}
+    void user_return_book() {}
+    void print_users() {}
+
+    
     int menu() {
         int choice = -1;
         while (choice == -1) {
@@ -29,6 +40,42 @@ struct Library
         }
 
         return choice;
+    }
+
+    void run() {
+        while (true) {
+            int choice = menu();
+
+            if (choice == 10)
+                break;
+            if (choice == 1) {
+                add_book();
+            }
+            else if (choice == 2) {
+                search_books_by_prefix();
+            }
+            else if (choice == 3) {
+                print_who_borrowed_book_by_name();
+            }
+            else if (choice == 4) {
+                print_library_by_id();
+            }
+            else if (choice == 5) {
+                print_library_by_name();
+            }
+            else if (choice == 6) {
+                add_user();
+            }
+            else if (choice == 7) {
+                user_borrow_book();
+            }
+            else if (choice == 8) {
+                user_return_book();
+            }
+            else if (choice == 9) {
+                print_users();
+            }
+        }
     }
 };
 int main()
