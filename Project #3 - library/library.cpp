@@ -1,5 +1,17 @@
 #include<iostream>
+#include<vector>
+#include<string>
 using namespace std;
+
+struct Book {
+    int id;
+    int name;
+    int total_borrowed;
+    int total_quantity;
+
+    vector<string> borrowed_names;
+};
+
 
 struct Library
 {
@@ -13,7 +25,7 @@ struct Library
     void user_return_book() {}
     void print_users() {}
 
-    
+
     int menu() {
         int choice = -1;
         while (choice == -1) {
