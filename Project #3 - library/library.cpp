@@ -58,6 +58,14 @@ struct User {
     void borrow(int book_id) {
         borrowed_bookes_id.push_back(book_id);
     }
+
+    void print() {
+        cout<<"user "<<name<<" id "<<national_id<<" borrowed books ids: ";
+        for (const auto &id : borrowed_bookes_id) {
+            cout<<id<<" ";
+        }
+        cout<<"\n";
+    }
 };
 
 struct Library
@@ -169,10 +177,16 @@ struct Library
             cout<<"Sorry Book is not exists\n";
         }
 
-        
+
     }
     void user_return_book() {}
-    void print_users() {}
+
+    
+    void print_users() {
+        for (int i=0;i<added_users;i++) {
+            users[i].print();
+        }
+    }
 
 
     int menu() {
