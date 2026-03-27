@@ -1,6 +1,8 @@
 #include<iostream>
 #include<vector>
 #include<string>
+#include <algorithm>
+
 using namespace std;
 
 const int MAX_BOOKS = 10;
@@ -18,7 +20,16 @@ struct Book {
     {
         total_borrowed = 0;
     }
+    void print() {
+        cout << "id = " << id<< " name = " << name << " total_quantity " << total_quantity<< " total_borrowed " << total_borrowed << "\n";   
+    }
 };
+
+bool comp_by_id(const Book &b1, const Book &b2) {
+    return b1.id < b2.id;
+}
+
+
 
 struct User {
     string name;
@@ -54,7 +65,12 @@ struct Library
     }
     void search_books_by_prefix() {}
     void print_who_borrowed_book_by_name() {}
-    void print_library_by_id() {}
+    void print_library_by_id() {
+        sort(books,books+added_books,comp_by_id);
+        for (int i = 0;i<added_books;i++) {
+            books[i].print();
+        }
+    }
     void print_library_by_name() {}
     void add_user() {
         if (added_users >= MAX_USERS) {
