@@ -58,6 +58,28 @@ struct Book {
 
     }
 
+     bool search_by_prefix(string book_name) {
+        if (name.size() < book_name.size()) return false;
+
+        int counter = 0;
+        for (int i = 0;i<(int)book_name.size();i++) {
+            if (name[i] != book_name[i]) {
+                return false;
+            }
+            else {
+                counter++;
+            }
+
+            if (counter == book_name.size()) {
+
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
     void print() {
         cout << "id = " << id<< " name = " << name << " total_quantity " << total_quantity<< " total_borrowed " << total_borrowed << "\n";   
     }
@@ -144,7 +166,22 @@ struct Library
         cin>>books[added_books].id>>books[added_books].name>>books[added_books].total_quantity;
         added_books++;
     }
-    void search_books_by_prefix() {}
+    void search_books_by_prefix() {
+        cout<<"Enter book name prefix:\n";
+        string book_name_prefix;
+        cin>>book_name_prefix;
+
+        bool status = false;
+        for (int i=0;i<added_books;i++) {
+            if (books[i].search_by_prefix(book_name_prefix)) {
+                status  = true;
+                cout<<books[i].name<<"\n";
+
+            }
+        }
+        if (status == false)
+        cout<<"No Books with such prefix\n";
+    }
 
 
     void print_who_borrowed_book_by_name() {
