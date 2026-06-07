@@ -1,15 +1,65 @@
 #include<iostream>
-
+#include<string>
+#include<fstream>
+#include<sstream>
+#include<vector>
 using namespace std;
+
+
+class USERS {
+    string user_name;
+    string password;
+    string name;
+    string email;
+    string allow_anonymous_questions;
+public:
+    bool signUp() {
+        auto status =  ios::out;
+        fstream file_handler("users.txt",status);
+        if (file_handler.fail()) {
+            cout<<"We can not open file\n";
+            return false;
+        }
+
+
+        std::cout << "Enter user name. (No spaces): ";
+        getline(cin,user_name);
+        file_handler<<user_name<<",";
+
+        std::cout << "Enter password: ";
+        getline(cin,password);
+        file_handler<<password<<",";
+
+        std::cout << "Enter name: ";
+        getline(cin,name);
+        file_handler<<name<<",";
+
+        std::cout << "Enter email: ";
+        getline(cin,email);
+        file_handler<<email<<",";
+
+        std::cout << "Allow anonymous questions?: (0 or 1) ";
+        getline(cin,allow_anonymous_questions);
+        file_handler<<allow_anonymous_questions<<"\n";
+        file_handler.close();
+
+
+        return true;
+    }
+    bool login() {
+       
+    }
+};
 
 class AskMe
 {
     private:
+    USERS user;
   
 public:
     
     int menu() {
-        int choice;
+        int choice = -1;
         while (choice == -1) {
             cout << "Menu:\n";
             cout << "\t1: Print Questions To Me\n";
@@ -35,6 +85,20 @@ public:
 
     void run()
     {
+        int choice;
+
+        cout<<"Menu:\n";
+        cout<<"\t1: Login\n";
+        cout<<"\t2: Sign Up\n";
+        cout<<"Enter number in range 1 - 2\n";
+        cin >> choice;
+        cin.ignore();
+
+        bool status = true;
+        if (choice == 1) {
+           status = user.signUp();
+        }
+
         int choice = menu();
     }
 };
