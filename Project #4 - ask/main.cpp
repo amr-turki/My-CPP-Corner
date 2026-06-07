@@ -47,7 +47,30 @@ public:
         return true;
     }
     bool login() {
-       
+       ifstream file_handler("users.txt");
+        if (file_handler.fail()) {
+            cout<<"We can not open file\n";
+            return false;
+        }
+
+        cout<<"Enter user name & password\n";
+        getline(cin,user_name);
+        getline(cin,password);
+
+        string line;
+        while (getline(file_handler,line)) {
+            vector<string> results;
+            istringstream in(line);
+            while (getline(in,line,',')) {
+                results.push_back(line);
+            }
+            if (results[0] == user_name && results[1] == password) {
+                return true;
+            }
+        }
+        file_handler.close();
+
+        return false;
     }
 };
 
@@ -96,9 +119,10 @@ public:
 
         bool status = true;
         if (choice == 1) {
-           status = user.signUp();
+           status = user.login();
+        }else {
+            status = user.signUp();
         }
-
         int choice = menu();
     }
 };
