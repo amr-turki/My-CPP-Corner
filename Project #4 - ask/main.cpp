@@ -14,7 +14,7 @@ class USERS {
     string allow_anonymous_questions;
 public:
     bool signUp() {
-        auto status =  ios::out;
+        auto status =  ios::in | ios::out | ios::app;
         fstream file_handler("users.txt",status);
         if (file_handler.fail()) {
             cout<<"We can not open file\n";
@@ -61,8 +61,9 @@ public:
         while (getline(file_handler,line)) {
             vector<string> results;
             istringstream in(line);
-            while (getline(in,line,',')) {
-                results.push_back(line);
+            string text;
+            while (getline(in,text,',')) {
+                results.push_back(text);
             }
             if (results[0] == user_name && results[1] == password) {
                 return true;
@@ -81,6 +82,30 @@ class AskMe
   
 public:
     
+    void printQuestionsToMe() {
+    }
+
+    void printQuestionsFromMe() {
+    }
+
+    void answerQuestion() {
+    }
+
+    void deleteQuestion() {
+    }
+
+    void askQuestion() {
+    }
+
+    void listSystemUsers() {
+    }
+
+    void feed() {
+    }
+
+    void logout() {
+    }
+
     int menu() {
         int choice = -1;
         while (choice == -1) {
@@ -123,7 +148,39 @@ public:
         }else {
             status = user.signUp();
         }
-        int choice = menu();
+        
+        if (status) {
+            while (true) {
+                int choice = menu();
+
+                if (choice == 1) {
+                    printQuestionsToMe();
+                }
+                else if (choice == 2) {
+                    printQuestionsFromMe();
+                }
+                else if (choice == 3) {
+                    answerQuestion();
+                }
+                else if (choice == 4) {
+                    deleteQuestion();
+                }
+                else if (choice == 5) {
+                    askQuestion();
+                }
+                else if (choice == 6) {
+                    listSystemUsers();
+                }
+                else if (choice == 7) {
+                    feed();
+                }
+                else if (choice == 8) {
+                    logout();
+                }
+            }
+        }
+
+        
     }
 };
 int main()
