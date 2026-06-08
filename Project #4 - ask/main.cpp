@@ -75,6 +75,34 @@ public:
         return "User is not found";
     }
 
+    void ListSystemUsers()
+    {
+        ifstream file_handler("users.txt");
+        if (file_handler.fail()) {
+            cout<<"Can not open file\n";
+            return ;
+        }
+
+        string line;
+        while (getline(file_handler,line)) {
+            vector<string> results;
+            istringstream in(line);
+
+            string text;
+            while (getline(in,text,',')) {
+                results.push_back(text);
+            }
+
+            if (results.empty()) {
+                cout<<"No users found\n";
+                return;
+            }
+            cout<<"ID: "<<user_id<<"\t"<<"Name: "<<user_name<<"\n";
+        }
+
+
+        file_handler.close();
+    }
 
     bool user_found(const string& user_id) {
         ifstream file_handler("users.txt");
@@ -273,6 +301,7 @@ public:
     }
 
     void listSystemUsers() {
+        user.ListSystemUsers();
     }
 
     void feed() {
