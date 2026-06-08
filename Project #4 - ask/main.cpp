@@ -74,13 +74,185 @@ public:
 
         return "User is not found";
     }
+
+
+    bool user_found(const string& user_id) {
+        ifstream file_handler("users.txt");
+        if (file_handler.fail()) {
+            cout<<"We can not open file\n";
+            return false;
+        }
+
+        string line;
+        while (getline(file_handler,line)) {
+            vector<string> results;
+            istringstream in(line);
+
+            string text;
+            while (getline(in,text,',')) {
+                results.push_back(text);
+            }
+            if (results[0] == user_id) {
+                file_handler.close();
+                return true;
+            }
+        }
+        file_handler.close();
+        return false;
+    }
+
+
+    bool AllowAnonymousQuestions(const string& id) {
+        bool allow = true;
+        ifstream file_handler("users.txt");
+        if (file_handler.fail()) {
+            cout<<"We can not open file\n";
+            return false;
+        }
+
+        string line;
+        while (getline(file_handler,line)) {
+            vector<string> results;
+            istringstream in(line);
+
+            string text;
+            while (getline(in,text,',')) {
+                results.push_back(text);
+            }
+            if (results[0] == id) {
+
+                file_handler.close();
+                if (results[5] != "1") {
+                    allow = false;
+                    break;
+                }
+            }
+        }
+        file_handler.close();
+
+        return allow;
+    }
 };
 
+class Questions
+{
+    private:
+    string from_user_id;
+    string to_user_id;
+    string question_id;
+    string text;
+    string allow_anonymous_questions;
+    string question_or_reply;
+    string parent_id;
 
+    static int inline id = 100;
+
+    USERS user;
+
+    public:
+    void AskQuestionNoThread() {
+        auto status =  ios::in | ios::out | ios::app;
+        fstream file_handler("questions.txt",status);
+        if (file_handler.fail()) {
+            cout<<"We can not open file\n";
+            return ;
+        }
+        id++;
+        question_id = to_string(id);
+        parent_id = "0";
+        file_handler<<parent_id<<","<<question_or_reply<<","<<allow_anonymous_questions<<","<<text<<","<<question_id<<","<<to_user_id<<","<<from_user_id<<"\n";
+
+        file_handler.close();
+    }
+    void AskQuestionInThread(const string& q_id) {
+        auto status =  ios::in | ios::out | ios::app;
+        fstream file_handler("questions.txt",status);
+        if (file_handler.fail()) {
+            cout<<"We can not open file\n";
+            return ;
+        }
+        id++;
+        question_id = to_string(id);
+        parent_id = q_id;
+
+        file_handler<<parent_id<<","<<question_or_reply<<","<<allow_anonymous_questions<<","<<text<<","<<question_id<<","<<to_user_id<<","<<from_user_id<<"\n";
+        file_handler.close();
+    }
+    void AskQuestion(const string& fr_user_id) {
+        from_user_id = fr_user_id;
+
+        cout<<"Enter User id or -1 to cancel: \n";
+        cin>>to_user_id;
+
+        if (!user.user_found(to_user_id)) {
+            cout<<"User is not found";
+            return;
+        }
+
+        question_or_reply = "Q";
+
+        if (!user.AllowAnonymousQuestions(to_user_id)) {
+            cout<<"Note: Anonymous question  are not allowed for this user\n";
+
+            allow_anonymous_questions = "0";
+
+            cout<<"For thread question: Enter Question id or -1 for new question: \n";
+            string id;
+            cin>>id;
+            cin.ignore();
+
+            if (id == "-1") {
+                cout<<"Enter question text:\n";
+                getline(cin,text);
+
+                AskQuestionNoThread();
+            }
+            else {
+                cout<<"Enter question text:\n";
+                getline(cin,text);
+
+                AskQuestionInThread(id);
+            }
+        }
+        else {
+            cout<<"Note: Anonymous question allowed for this user\n";
+            string choice;
+            cout<<"ِAsk Anonymous question (0 or 1)\n";
+            cin>>choice;
+
+            if (choice == "0" ) {
+                allow_anonymous_questions = "0";
+            }
+            else {
+                allow_anonymous_questions = "1";
+            }
+
+            cout<<"For thread question: Enter Question id or -1 for new question: \n";
+            string id;
+            cin>>id;
+            cin.ignore();
+
+            if (id == "-1") {
+                cout<<"Enter question text:\n";
+                getline(cin,text);
+
+                AskQuestionNoThread();
+            }
+            else {
+                cout<<"Enter question text:\n";
+                getline(cin,text);
+
+                AskQuestionInThread(id);
+            }
+
+        }
+    }
+};
 class AskMe
 {
     private:
     USERS user;
+    Questions question;
   
 public:
     
@@ -96,7 +268,8 @@ public:
     void deleteQuestion() {
     }
 
-    void askQuestion() {
+    void askQuestion(const string& user_id) {
+        question.AskQuestion(user_id);
     }
 
     void listSystemUsers() {
@@ -184,7 +357,7 @@ public:
                 deleteQuestion();
             }
             else if (choice == 5) {
-                //askQuestion(user_id);
+                askQuestion(user_id);
             }
             else if (choice == 6) {
                 listSystemUsers();
