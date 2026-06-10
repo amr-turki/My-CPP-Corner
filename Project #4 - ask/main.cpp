@@ -561,6 +561,53 @@ class Questions
         out_file.close();
         cout << "Question deleted successfully!\n";
     }
+
+
+    void ListingUsersFeed() {
+    vector<Questions> all_questions;
+    ifstream file_handler("questions.txt");
+    if (file_handler.fail()) {
+        cout << "Can not open file\n";
+        return;
+    }
+
+    string line;
+    while (getline(file_handler, line)) {
+        if (line.empty()) continue;
+        istringstream in(line);
+        Questions q;
+
+        if (getline(in, q.parent_id, ',') &&
+            getline(in, q.allow_anonymous_questions, ',') &&
+            getline(in, q.text, ',') &&
+            getline(in, q.question_id, ',') &&
+            getline(in, q.to_user_id, ',') &&
+            getline(in, q.from_user_id, ',') &&
+            getline(in, q.answer, '\n')) {
+            all_questions.push_back(q);
+        }
+    }
+    file_handler.close();
+
+    for (int i = 0; i < all_questions.size(); i++) {
+        if (!all_questions[i].answer.empty()) {
+            if (all_questions[i].parent_id != "0") {
+                cout << "\tThread Parent ID (" << all_questions[i].parent_id << ") ";
+            }
+
+            cout << "Question ID: (" << all_questions[i].question_id << ") ";
+
+            if (all_questions[i].allow_anonymous_questions == "0") {
+                cout << "from user id (" << all_questions[i].from_user_id << ")";
+            } else {
+                cout << "from user id (-1)";
+            }
+
+            cout << " to user id (" << all_questions[i].to_user_id << ")\t Question: " << all_questions[i].text << "\n";
+            cout << "\t Answer: " << all_questions[i].answer << "\n\n";
+        }
+    }
+}
 };
 class AskMe
 {
@@ -595,10 +642,10 @@ public:
     }
 
     void feed() {
+        question.ListingUsersFeed();
     }
 
-    void logout() {
-    }
+
 
     int menu() {
         int choice = -1;
