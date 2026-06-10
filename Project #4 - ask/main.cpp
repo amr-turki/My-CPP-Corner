@@ -504,6 +504,63 @@ class Questions
         out_file.close();
         cout << "Answer saved successfully!\n";
     }
+
+    void DeleteQuestion(const string& user_id) {
+        vector<Questions> all_questions;
+        ifstream file_handler("questions.txt");
+        if (file_handler.fail()) {
+            cout << "Can not open file\n";
+            return;
+        }
+
+        string line;
+        while (getline(file_handler, line)) {
+            if (line.empty()) continue;
+            istringstream in(line);
+            Questions q;
+
+            if (getline(in, q.parent_id, ',') &&
+                getline(in, q.allow_anonymous_questions, ',') &&
+                getline(in, q.text, ',') &&
+                getline(in, q.question_id, ',') &&
+                getline(in, q.to_user_id, ',') &&
+                getline(in, q.from_user_id, ',') &&
+                getline(in, q.answer, '\n')) {
+                all_questions.push_back(q);
+            }
+        }
+        file_handler.close();
+
+        string target_id;
+        cout << "Enter Question id to delete or -1 to cancel: ";
+        cin >> target_id;
+        if (target_id == "-1") return;
+
+        ofstream out_file("questions.txt", ios::out);
+        for (int i = 0; i < all_questions.size(); i++) {
+            if (all_questions[i].question_id == target_id) {
+                if (all_questions[i].from_user_id != user_id) {
+                    cout << "Error: You can only delete questions you asked.\n";
+                    out_file.close();
+                    return;
+                }
+                continue; 
+            }
+            if (all_questions[i].parent_id == target_id) {
+                continue; 
+            }
+
+            out_file << all_questions[i].parent_id << ","
+                     << all_questions[i].allow_anonymous_questions << ","
+                     << all_questions[i].text << ","
+                     << all_questions[i].question_id << ","
+                     << all_questions[i].to_user_id << ","
+                     << all_questions[i].from_user_id << ","
+                     << all_questions[i].answer << "\n";
+        }
+        out_file.close();
+        cout << "Question deleted successfully!\n";
+    }
 };
 class AskMe
 {
@@ -525,7 +582,8 @@ public:
         question.AnswerQuestion(user_id);
     }
 
-    void deleteQuestion() {
+    void deleteQuestion(const string& user_id) {
+        question.DeleteQuestion(user_id);
     }
 
     void askQuestion(const string& user_id) {
@@ -617,7 +675,7 @@ public:
                 answerQuestion(user_id);
             }
             else if (choice == 4) {
-                deleteQuestion();
+                deleteQuestion(user_id);
             }
             else if (choice == 5) {
                 askQuestion(user_id);
