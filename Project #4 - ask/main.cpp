@@ -344,6 +344,52 @@ class Questions
             }
         }
     }
+
+    void PrintQuestionsFromMe(const string& user_id) {
+        ifstream file_handler("questions.txt");
+        if (file_handler.fail()) {
+            cout << "Can not open file\n";
+            return;
+        }
+
+        string line;
+        while (getline(file_handler, line)) {
+            if (line.empty()) continue;
+            istringstream in(line);
+            Questions q;
+
+            if (getline(in, q.parent_id, ',') &&
+                getline(in, q.allow_anonymous_questions, ',') &&
+                getline(in, q.text, ',') &&
+                getline(in, q.question_id, ',') &&
+                getline(in, q.to_user_id, ',') &&
+                getline(in, q.from_user_id, ',') &&
+                getline(in, q.answer, '\n')) {
+
+                if (q.from_user_id == user_id) {
+                    if (q.parent_id != "0") {
+                        cout << "\tThread Parent ID (" << q.parent_id << ") ";
+                    }
+
+                    cout << "Question ID: (" << q.question_id << ") ";
+
+                    if (q.allow_anonymous_questions == "0") {
+                        cout << "!AQ ";
+                    }
+
+                    cout << "to user id (" << q.to_user_id << ")\t Question: " << q.text << "\n";
+
+                    if (!q.answer.empty()) {
+                        cout << "\t Answer: " << q.answer << "\n";
+                    } else {
+                        cout << "\t NOT Answered YET\n";
+                    }
+                    cout << "\n";
+                }
+            }
+        }
+        file_handler.close();
+    }
 };
 class AskMe
 {
@@ -357,7 +403,8 @@ public:
         question.PrintQuestionsToMe(user_id);
     }
 
-    void printQuestionsFromMe() {
+    void printQuestionsFromMe(const string& user_id) {
+        question.PrintQuestionsFromMe(user_id);
     }
 
     void answerQuestion() {
@@ -449,7 +496,7 @@ public:
                 printQuestionsToMe(user_id);
             }
             else if (choice == 2) {
-                printQuestionsFromMe();
+                printQuestionsFromMe(user_id);
             }
             else if (choice == 3) {
                 answerQuestion();
