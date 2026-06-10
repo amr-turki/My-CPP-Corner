@@ -312,9 +312,8 @@ class Questions
             if (parent_questions[i].to_user_id == user_id) {
                 cout << "Question ID: (" << parent_questions[i].question_id << ") ";
 
-                if (parent_questions[i].allow_anonymous_questions == "1") {
-                    cout << "from user id (-1)";
-                } else {
+                if (parent_questions[i].allow_anonymous_questions == "0") {
+            
                     cout << "from user id (" << parent_questions[i].from_user_id << ")";
                 }
 
@@ -328,11 +327,9 @@ class Questions
                 for (int j = 0; j < threads[curr_id].size(); j++) {
                     cout << "\tThread: Question Id (" << threads[curr_id][j].question_id << ") ";
 
-                    if (threads[curr_id][j].allow_anonymous_questions == "1") {
-                        cout << "from user id (-1)";
-                    } else {
-                        cout << "from user id (" << threads[curr_id][j].from_user_id << ")";
-                    }
+                    if (threads[curr_id][j].allow_anonymous_questions == "0") {
+                cout << "from user id (" << threads[curr_id][j].from_user_id << ")";
+                }
 
                     cout << "\t Question: " << threads[curr_id][j].text << "\n";
 
@@ -367,9 +364,6 @@ class Questions
                 getline(in, q.answer, '\n')) {
 
                 if (q.from_user_id == user_id) {
-                    if (q.parent_id != "0") {
-                        cout << "\tThread Parent ID (" << q.parent_id << ") ";
-                    }
 
                     cout << "Question ID: (" << q.question_id << ") ";
 
