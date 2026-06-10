@@ -390,6 +390,120 @@ class Questions
         }
         file_handler.close();
     }
+    void AnswerQuestion(const string& user_id) {
+        vector<Questions> parent_questions;
+        map<string, vector<Questions>> threads;
+
+        ifstream file_handler("questions.txt");
+        if (file_handler.fail()) {
+            cout << "Can not open file\n";
+            return;
+        }
+
+        string line;
+        while (getline(file_handler, line)) {
+            if (line.empty()) continue;
+            istringstream in(line);
+            Questions q;
+
+            if (getline(in, q.parent_id, ',') &&
+                getline(in, q.allow_anonymous_questions, ',') &&
+                getline(in, q.text, ',') &&
+                getline(in, q.question_id, ',') &&
+                getline(in, q.to_user_id, ',') &&
+                getline(in, q.from_user_id, ',') &&
+                getline(in, q.answer, '\n')) {
+                
+                if (q.parent_id == "0") {
+                    parent_questions.push_back(q);
+                } else {
+                    threads[q.parent_id].push_back(q);
+                }
+            }
+        }
+        file_handler.close();
+
+        string target_id;
+        cout << "Enter Question id or -1 to cancel: ";
+        cin >> target_id;
+        if (target_id == "-1") return;
+
+        bool found = false;
+
+        for (int i = 0; i < parent_questions.size(); i++) {
+            if (parent_questions[i].question_id == target_id) {
+                if (parent_questions[i].to_user_id != user_id) {
+                    cout << "Error: You can only answer questions sent to you.\n";
+                    return;
+                }
+                
+                if (!parent_questions[i].answer.empty()) {
+                    cout << "Warning: Already answered. Answer will be updated.\n";
+                }
+                
+                cout << "Enter answer: ";
+                cin.ignore();
+                getline(cin, parent_questions[i].answer);
+                found = true;
+                break;
+            }
+
+            string curr_id = parent_questions[i].question_id;
+            for (int j = 0; j < threads[curr_id].size(); j++) {
+                if (threads[curr_id][j].question_id == target_id) {
+                    if (threads[curr_id][j].to_user_id != user_id) {
+                        cout << "Error: You can only answer questions sent to you.\n";
+                        return;
+                    }
+
+                    if (!threads[curr_id][j].answer.empty()) {
+                        cout << "Warning: Already answered. Answer will be updated.\n";
+                    }
+
+                    cout << "Enter answer: ";
+                    cin.ignore();
+                    getline(cin, threads[curr_id][j].answer);
+                    found = true;
+                    break;
+                }
+            }
+            if (found) break;
+        }
+
+        if (!found) {
+            cout << "Question ID not found.\n";
+            return;
+        }
+
+        ofstream out_file("questions.txt", ios::out);
+        if (out_file.fail()) {
+            cout << "Cannot write to file\n";
+            return;
+        }
+
+        for (int i = 0; i < parent_questions.size(); i++) {
+            out_file << parent_questions[i].parent_id << ","
+                     << parent_questions[i].allow_anonymous_questions << ","
+                     << parent_questions[i].text << ","
+                     << parent_questions[i].question_id << ","
+                     << parent_questions[i].to_user_id << ","
+                     << parent_questions[i].from_user_id << ","
+                     << parent_questions[i].answer << "\n";
+
+            string curr_id = parent_questions[i].question_id;
+            for (int j = 0; j < threads[curr_id].size(); j++) {
+                out_file << threads[curr_id][j].parent_id << ","
+                         << threads[curr_id][j].allow_anonymous_questions << ","
+                         << threads[curr_id][j].text << ","
+                         << threads[curr_id][j].question_id << ","
+                         << threads[curr_id][j].to_user_id << ","
+                         << threads[curr_id][j].from_user_id << ","
+                         << threads[curr_id][j].answer << "\n";
+            }
+        }
+        out_file.close();
+        cout << "Answer saved successfully!\n";
+    }
 };
 class AskMe
 {
@@ -407,7 +521,8 @@ public:
         question.PrintQuestionsFromMe(user_id);
     }
 
-    void answerQuestion() {
+    void answerQuestion(const string& user_id) {
+        question.AnswerQuestion(user_id);
     }
 
     void deleteQuestion() {
@@ -499,7 +614,7 @@ public:
                 printQuestionsFromMe(user_id);
             }
             else if (choice == 3) {
-                answerQuestion();
+                answerQuestion(user_id);
             }
             else if (choice == 4) {
                 deleteQuestion();
