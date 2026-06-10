@@ -3,6 +3,7 @@
 #include<fstream>
 #include<sstream>
 #include<vector>
+#include<map>
 using namespace std;
 
 
@@ -170,7 +171,7 @@ class Questions
     string question_id;
     string text;
     string allow_anonymous_questions;
-    string question_or_reply;
+    string answer;
     string parent_id;
 
     static int inline id = 100;
@@ -188,7 +189,7 @@ class Questions
         id++;
         question_id = to_string(id);
         parent_id = "0";
-        file_handler<<parent_id<<","<<question_or_reply<<","<<allow_anonymous_questions<<","<<text<<","<<question_id<<","<<to_user_id<<","<<from_user_id<<"\n";
+        file_handler << parent_id << "," << allow_anonymous_questions << "," << text << "," << question_id << "," << to_user_id << "," << from_user_id << "," << answer << "\n";
 
         file_handler.close();
     }
@@ -203,7 +204,7 @@ class Questions
         question_id = to_string(id);
         parent_id = q_id;
 
-        file_handler<<parent_id<<","<<question_or_reply<<","<<allow_anonymous_questions<<","<<text<<","<<question_id<<","<<to_user_id<<","<<from_user_id<<"\n";
+        file_handler << parent_id << "," << allow_anonymous_questions << "," << text << "," << question_id << "," << to_user_id << "," << from_user_id << "," << answer << "\n";
         file_handler.close();
     }
     void AskQuestion(const string& fr_user_id) {
@@ -217,7 +218,6 @@ class Questions
             return;
         }
 
-        question_or_reply = "Q";
 
         if (!user.AllowAnonymousQuestions(to_user_id)) {
             cout<<"Note: Anonymous question  are not allowed for this user\n";
@@ -275,6 +275,75 @@ class Questions
 
         }
     }
+    void PrintQuestionsToMe(const string& user_id) {
+        vector<Questions> parent_questions;
+        map<string, vector<Questions>> threads;
+
+        ifstream file_handler("questions.txt");
+        if (file_handler.fail()) {
+            cout << "Can not open file\n";
+            return;
+        }
+
+        string line;
+        while (getline(file_handler, line)) {
+            if (line.empty()) continue;
+            istringstream in(line);
+            Questions q;
+
+            if (getline(in, q.parent_id, ',') &&
+                getline(in, q.allow_anonymous_questions, ',') &&
+                getline(in, q.text, ',') &&
+                getline(in, q.question_id, ',') &&
+                getline(in, q.to_user_id, ',') &&
+                getline(in, q.from_user_id, ',') &&
+                getline(in, q.answer, '\n')) {
+
+                if (q.parent_id == "0") {
+                    parent_questions.push_back(q);
+                } else {
+                    threads[q.parent_id].push_back(q);
+                }
+            }
+        }
+        file_handler.close();
+
+        for (int i = 0; i < parent_questions.size(); i++) {
+            if (parent_questions[i].to_user_id == user_id) {
+                cout << "Question ID: (" << parent_questions[i].question_id << ") ";
+
+                if (parent_questions[i].allow_anonymous_questions == "1") {
+                    cout << "from user id (-1)";
+                } else {
+                    cout << "from user id (" << parent_questions[i].from_user_id << ")";
+                }
+
+                cout << "\t Question: " << parent_questions[i].text << "\n";
+
+                if (!parent_questions[i].answer.empty()) {
+                    cout << "\t Answer: " << parent_questions[i].answer << "\n";
+                }
+
+                string curr_id = parent_questions[i].question_id;
+                for (int j = 0; j < threads[curr_id].size(); j++) {
+                    cout << "\tThread: Question Id (" << threads[curr_id][j].question_id << ") ";
+
+                    if (threads[curr_id][j].allow_anonymous_questions == "1") {
+                        cout << "from user id (-1)";
+                    } else {
+                        cout << "from user id (" << threads[curr_id][j].from_user_id << ")";
+                    }
+
+                    cout << "\t Question: " << threads[curr_id][j].text << "\n";
+
+                    if (!threads[curr_id][j].answer.empty()) {
+                        cout << "\t\t Thread Answer: " << threads[curr_id][j].answer << "\n";
+                    }
+                }
+                cout << "\n";
+            }
+        }
+    }
 };
 class AskMe
 {
@@ -284,7 +353,8 @@ class AskMe
   
 public:
     
-    void printQuestionsToMe() {
+    void printQuestionsToMe(const string& user_id) {
+        question.PrintQuestionsToMe(user_id);
     }
 
     void printQuestionsFromMe() {
@@ -376,7 +446,7 @@ public:
             int choice = menu();
 
             if (choice == 1) {
-                printQuestionsToMe();
+                printQuestionsToMe(user_id);
             }
             else if (choice == 2) {
                 printQuestionsFromMe();
