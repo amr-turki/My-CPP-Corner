@@ -67,7 +67,7 @@ public:
                 results.push_back(text);
             }
             if (results[1] == user_name && results[2] == password) {
-                return user_id;
+                return results[0];
             }
         }
         file_handler.close();
@@ -97,7 +97,7 @@ public:
                 cout<<"No users found\n";
                 return;
             }
-            cout<<"ID: "<<user_id<<"\t"<<"Name: "<<user_name<<"\n";
+            cout<<"ID: "<<results[0]<<"\t"<<"Name: "<<results[1]<<"\n";
         }
 
 
@@ -348,26 +348,28 @@ public:
 
         string user_id;
         if (choice == 1) {
-            if ( user.login() == "We can not open file\n")
+            string result = user.login();
+            if ( result == "We can not open file\n")
             {
-                cout<<"We can not open file\n";
+                cout<<result;
                 return;
             }
 
-            else if (user.login() == "User is not found") {
-                cout<<"User is not found\n";
+            else if (result == "User is not found") {
+                cout<<result;
                 return;
             }
             else {
-                user_id = user.login();
+                user_id = result;
             }
 
         }else {
-            if (user.signUp() == "We can not open file\n") {
-                cout<<"We can not open file\n";
+            string result = user.signUp();
+            if (result == "We can not open file\n") {
+                cout<<result;
             }
             else
-                user_id = user.signUp();
+                user_id = result;
         }
 
         while (true) {
