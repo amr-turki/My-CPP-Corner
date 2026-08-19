@@ -3,128 +3,95 @@
 using namespace std;
 
 const int QUEUE = 5;
-const int SPECILIZATION = 5;
-struct Queue
-{
-    
+const int SPECLIAZTION = 20;
+
+struct Queue {
     string names[QUEUE];
-    int statiss[QUEUE];
-    int size;
+    int statistics[QUEUE];
+
+    int added;
     int spec;
-    Queue(int spec)
-    {
-        size = 0;
+
+    Queue() {
+        added = 0;
+        spec = -1;
+    }
+    Queue(const int& spec) {
         this->spec = spec;
-    }
-    Queue()
-    {
-        size = 0;
-        this->spec = -1;
+        added = 0;
     }
 
-
-    
-    void right_shift()
-    {
-       
-        for(int i = size -1; i>=0 ; i--)
-        {
-            names[i+1] = names[i];
-            statiss[i+1] = statiss[i];
+    void shiftPatients() {
+        for (int i = added-1; i>=0; i--) {
+            names[i+1] =names[i];
+            statistics[i+1] = statistics[i];
         }
     }
-    bool AddPatient(int spec,string name,int statis)
-    {
 
-        if(size < QUEUE)
-        {
-            if(size == 0)
-            {
-                names[0] = name;
-                statiss[0] = statis;
-            }
-            else if(statis == 0)
-            {
-                names[size] = name;
-                statiss[size] = statis;
-            }
-            else
-            {
-                right_shift();  
-                names[0] = name;
-                statiss[0] = statis;
-            }
-
-            size++;
-
-            return true;
-        }
-        else{
-            cout<<"Sorry we can not add more patients for this specialization\n";
+    bool addNewPatient(const string& name,const int& statis) {
+        if (added == QUEUE) {
             return false;
         }
-    }
 
-     void PrintAllPatients()
-     {
-            if(size >= 1)
-            {
-                cout<<"There are "<<size<<" patients in specilization "<<spec<<"\n";
-                for(int queue = 0;queue<size;queue++)
-                    {
-                        cout<<names[queue]<<" ";
-                        if(statiss[queue] == 0)
-                        {
-                            cout<<"Regular\n";
-                        }
-                        else
-                        {
-                            cout<<"Urgent\n";
-                        }
-
-                    }
-            }
-            
-    }
-
-    void left_shift()
-    {
-          
-        for(int i = 1; i<size ; i++)
-        {
-            names[i-1] = names[i];
-            statiss[i-1] = statiss[i];
+        if (statis == 0) {
+            names[added] = name;
+            statistics[added] = statis;
         }
-        size--;
-    }
+        else {
+            shiftPatients();
 
-    bool GetNextPatient()
-    {
+            names[0] = name;
+            statistics[0] = statis;
+        }
 
-        if(size<1)
-            return false;
-        
-
-        cout<<names[0]<<" please go with the Dr\n";
-        left_shift();
-
+        added++;
 
         return true;
     }
 
+    void printSpecializationPatient() {
+        if (added == 0)
+            return;
+
+
+        cout<<"There are "<<added<<" patients in specialization "<<spec<<"\n";
+        for (int i = 0; i < added; i++) {
+            cout<<names[i]<<" ";
+            if (statistics[i] == 0) {
+                cout<<"regular\n";
+            }
+            else {
+                cout<<"urgent\n";
+            }
+        }
+    }
+    void removePatient() {
+        for (int i = 1; i < added; i++) {
+            names[i-1] =names[i];
+            statistics[i-1] =statistics[i];
+        }
+    }
+    void getNextPatient() {
+        if (added == 0) {
+            cout<<"No Patients at the moment. Have rest, Dr\n";
+            return;
+        }
+        cout<<names[0]<<" please go with the Dr\n";
+
+        removePatient();
+        added--;
+    }
+
 };
 
-struct Hospital
-{    
-    Queue queues[SPECILIZATION+1];
-    Hospital()
-    {
-        for(int i=1;i<=SPECILIZATION;i++)
-        {
+struct HospitalSystem {
+    Queue queues[SPECLIAZTION+1];
+
+    HospitalSystem() {
+        for (int i = 0; i < SPECLIAZTION+1; i++) {
             queues[i] = Queue(i);
         }
     }
-
 
     int menu() {
         int choice = -1;
@@ -138,7 +105,7 @@ struct Hospital
 
             cin>>choice;
 
-            if (!(choice>=1 && choice<=4)) 
+            if (!(choice>=1 && choice<=4))
             {
                 cout<<"Invalid choice\n";
                 cout<<"Again\n";
@@ -148,115 +115,61 @@ struct Hospital
         }
         return choice;
     }
-    void run() {
 
+
+    void run() {
         while (true) {
             int choice = menu();
 
             if (choice == 1) {
-                AddPatient();
+                addNewPatient();
             }
             else if (choice == 2) {
-                PrintAllPatients();
+                printAllPatients();
             }
             else if (choice == 3) {
-                GetNextPatient();
+                getNextPatient();
             }
-            else if(choice == 4){
+            else if (choice == 4) {
                 break;
             }
         }
     }
 
-    void AddPatient()
-    {
+    void addNewPatient() {
         int spec;
         string name;
         int statis;
         cout<<"Enter specialization, name, statis:\n";
         cin>>spec>>name>>statis;
 
-        if (!(spec>=1 && spec<=5)) 
-        {
-            cout<<"Invalid input. Specialization must be in the range [1-5].\n";
-            cout<<"Again\n";
 
-            spec = -1;
-            while(spec == -1)
-            {
-                cout<<"Enter specilization: ";
-
-                cin>>spec;
-
-                if (!(spec>=1 && spec<=5)) 
-                {
-                    cout<<"Invalid input. Specialization must be in the range [1-5].\n";
-                    cout<<"Again\n";
-
-                    spec = -1;
-                }
-            }
-            
-        }
-        
-        bool status  = queues[spec].AddPatient(spec,name,statis);
-        
-        if(status == true)
-        {
-            cout<<"Patient added to this specialization\n";
+        bool status = queues[spec].addNewPatient(name,statis);
+        if (!status) {
+            cout<<"Sorry we can not add more patients for this specialization \n";
         }
         else
-        {
-            cout<<"Sorry we can not add more patients for this specialization\n";
-        }
-   
+        cout<<"Added patient in specialization: "<<spec<<"\n";
     }
+    void printAllPatients() {
+        cout<<"***********************************\n";
+        for (int specialization = 1; specialization < SPECLIAZTION+1; specialization++) {
+            queues[specialization].printSpecializationPatient();
 
-    void PrintAllPatients()
-    {
-   
-        for(int spec = 1;spec<=SPECILIZATION;spec++)
-        {
-            queues[spec].PrintAllPatients();
-            
         }
     }
 
+    void getNextPatient() {
+        int specialization;r
+        cout<<"Enter specialization:\n";
+        cin>>specialization;
 
-    void GetNextPatient()
-    {
-        int spec = -1;
-        while(spec == -1)
-        {
-            cout<<"Enter specilization: ";
-
-            cin>>spec;
-
-            if (!(spec>=1 && spec<=5)) 
-            {
-                cout<<"Invalid input. Specialization must be in the range [1-5].\n";
-                cout<<"Again\n";
-
-                spec = -1;
-            }
-        }
-        bool status  = queues[spec].GetNextPatient();
-
-
-        if(status == false)
-        {
-            cout<<"No patients at the moment. Have rest, Dr\n";
-            return;
-        }
-
+        queues[specialization].getNextPatient();
     }
-
 };
-
-int main()
-{
-    Hospital Hospital;
-    Hospital.run();
+int main() {
+    HospitalSystem hospitalSystem;
+    hospitalSystem.run();
 
     return 0;
 }

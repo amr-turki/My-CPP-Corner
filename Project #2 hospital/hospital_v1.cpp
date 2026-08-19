@@ -3,7 +3,7 @@
 using namespace std;
 
 const int QUEUE = 5;
-const int SPECILIZATION = 5;
+const int SPECILIZATION = 20;
 string names[SPECILIZATION+1][QUEUE];
 int statistics[SPECILIZATION+1][QUEUE];
 int added[SPECILIZATION+1]{};
@@ -117,13 +117,13 @@ void hospitalProgram() {
         int choice = menu();
 
         if (choice == 1) {
-            AddPatient();
+            addNewPatient();
         }
         else if (choice == 2) {
-            PrintAllPatients();
+           printAllPatients();
         }
         else if (choice == 3) {
-            GetNextPatient();
+           getNextPatient();
         }
         else if(choice == 4){
             break;
