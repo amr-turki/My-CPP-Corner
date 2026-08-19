@@ -69,45 +69,27 @@ void PrintAllPatients()
     }
 }
 
-void left_shift(int spec,string names[],int statiss[])
-{
-    int size = added[spec];
-
-    for(int i = 1; i<size ; i++)
-    {
-        names[i-1] = names[i];
-        statiss[i-1] = statiss[i];
+void removePatient(string names[],int statistics[],int size) {
+    for (int i = 1; i < size; i++) {
+        names[i-1] =names[i];
+        statistics[i-1] =statistics[i];
     }
-    added[spec]--;
 }
-void GetNextPatient()
-{
-    int spec = -1;
-    while(spec == -1)
-    {
-        cout<<"Enter specilization: ";
+void getNextPatient() {
+    int specialization;
+    cout<<"Enter specialization:\n";
+    cin>>specialization;
 
-        cin>>spec;
-
-        if (!(spec>=1 && spec<=5)) 
-        {
-            cout<<"Invalid input. Specialization must be in the range [1-5].\n";
-            cout<<"Again\n";
-
-            spec = -1;
-        }
-    }
-
-    if(added[spec]<1)
-    {
-        cout<<"No patients at the moment. Have rest, Dr\n";
+    if (added[specialization] == 0) {
+        cout<<"No Patients at the moment. Have rest, Dr";
         return;
     }
+    cout<<names[specialization][0]<<" please go with the Dr\n";
 
-    cout<<names[spec][0]<<" please go with the Dr\n";
-    left_shift(spec,names[spec],statiss[spec]);
-
+    removePatient(names[specialization],statistics[specialization],added[specialization]);
+    added[specialization]--;
 }
+
 int menu() {
     int choice = -1;
     while(choice == -1)
