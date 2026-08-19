@@ -5,78 +5,44 @@ using namespace std;
 const int QUEUE = 5;
 const int SPECILIZATION = 5;
 string names[SPECILIZATION+1][QUEUE];
-int statiss[SPECILIZATION+1][QUEUE];
-
+int statistics[SPECILIZATION+1][QUEUE];
 int added[SPECILIZATION+1]{};
 
-void right_shift(int spec,string names[],int statiss[])
-{
-    int size = added[spec];
-
-    for(int i = size -1; i>=0 ; i--)
-    {
-        names[i+1] = names[i];
-        statiss[i+1] = statiss[i];
+void shiftPatients(string names[],int statistics[],int size) {
+    for (int i = size-1; i>=0; i--) {
+        names[i+1] =names[i];
+        statistics[i+1] =statistics[i];
     }
 }
-void AddPatient()
-{
+
+void addNewPatient() {
     int spec;
     string name;
     int statis;
     cout<<"Enter specialization, name, statis:\n";
     cin>>spec>>name>>statis;
 
-     if (!(spec>=1 && spec<=5)) 
-    {
-        cout<<"Invalid input. Specialization must be in the range [1-5].\n";
-        cout<<"Again\n";
-
-        spec = -1;
-         while(spec == -1)
-         {
-            cout<<"Enter specilization: ";
-
-            cin>>spec;
-
-            if (!(spec>=1 && spec<=5)) 
-            {
-                cout<<"Invalid input. Specialization must be in the range [1-5].\n";
-                cout<<"Again\n";
-
-                spec = -1;
-            }
-         }
-        
+     if (added[spec] == QUEUE) {
+        cout<<"Sorry we can not add more patients for this specialization \n";
+         return;
     }
-   
-    
-    if(added[spec] < QUEUE)
-    {
-        if(added[spec] == 0)
-        {
-            names[spec][0] = name;
-            statiss[spec][0] = statis;
-        }
-        else if(statis == 0)
-        {
-            names[spec][added[spec]] = name;
-            statiss[spec][added[spec]] = statis;
-        }
-        else
-        {
-            right_shift(spec,names[spec],statiss[spec]);  
-            names[spec][0] = name;
-            statiss[spec][0] = statis;
-        }
 
-        added[spec]++;
+    if (statis == 0) {
+        names[spec][added[spec]] = name;
+        statistics[spec][added[spec]] = statis;
     }
-    else{
-        cout<<"Sorry we can not add more patients for this specialization\n";
-        return;
+    else {
+        shiftPatients(names[spec],statistics[spec],added[spec]);
+
+        names[spec][0] = name;
+        statistics[spec][0] = statis;
     }
+
+    added[spec]++;
+    cout<<"Added patient in specialization: "<<spec<<"\n";
 }
+
+
 void PrintAllPatients()
 {
    
@@ -164,7 +130,7 @@ int menu() {
     }
     return choice;
 }
-void hospital_program() {
+void hospitalProgram() {
 
     while (true) {
         int choice = menu();
@@ -185,6 +151,6 @@ void hospital_program() {
 }
 int main()
 {
-    hospital_program();
+    hospitalProgram();
     return 0;
 }
