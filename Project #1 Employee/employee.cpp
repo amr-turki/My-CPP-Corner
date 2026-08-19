@@ -3,33 +3,40 @@
 using namespace std;
 
 const int MAX = 100;
-string name[MAX];
-int age[MAX];
-double salary[MAX];
-char gender[MAX];
+string names[MAX];
+int ages[MAX];
+double salaries[MAX];
+char genders[MAX];
 
 int added = 0;
 
 void add_employee() {
     cout<<"Enter your name\n";
-    cin>>name[added];
+    cin>>names[added];
 
     cout<<"Enter age\n";
-    cin>>age[added];
+    cin>>ages[added];
 
     cout<<"Enter gender\n";
-    cin>>gender[added];
+    cin>>genders[added];
 
     cout<<"Enter salary\n";
-    cin>>salary[added];
+    cin>>salaries[added];
 
     added++;
 }
 void printall_employee() {
+     if (added == 0) {
+        cout << "****************************\n";
+        cout<<"No such employee"<<"\n";
+        return;
+    }
+
+    cout << "****************************\n";
     for(int i=0;i<added;i++) {
 
-        if (age[i] != -1) {
-            cout<<name[i]<<" "<<age<<" "<<gender<<" "<<salary[i]<<"\n";
+        if (ages[i] != -1) {
+            cout<<names[i]<<" "<<ages[i]<<" "<<genders[i]<<" "<<salaries[i]<<"\n";
         }
     }
 }
@@ -38,10 +45,16 @@ void delete_by_age() {
     cout<<"Enter start and end age\n";
     cin>>start_age>>end_age;
 
+    start_age = min(start_age,end_age);
+    end_age = max(start_age,end_age);
+
     for(int i=0;i<added;i++) {
 
-        if (age[i]>=start_age && age[i]<=end_age) {
-            age[i] = -1;
+        if (ages[i]>=start_age && ages[i]<=end_age) {
+          
+            ages[i] = -1;
+            added--;
+            return;
         }
     }
 }
@@ -53,18 +66,18 @@ void update_salary() {
     cout<<"Enter the name and salary\n";
     cin>>employee_name>>emplyee_salary;
 
-    bool not_found = true;
     for(int i=0;i<added;i++) {
         //age[i] != -1 to ensure employee record is active
-        if (name[i] == employee_name && age[i] != -1) {
-            salary[i] = emplyee_salary;
-            not_found = false;
+        if (names[i] == employee_name && ages[i] != -1) {
+            salaries[i] = emplyee_salary;
+
             cout<<"Update employee salary\n";
-            break;
+            return;
         }
     }
-    if (not_found ) 
-        cout<<"No such employee"<<"\n";
+    
+
+    cout<<"No such employee"<<"\n";
    
 }
 
@@ -84,7 +97,7 @@ int menu() {
         if (!(choice>=1 && choice<=5)) 
         {
             cout<<"Invalid choice\n";
-            cout<<'Again\n';
+            cout<<"Again\n";
 
             choice = -1;
         }
@@ -113,7 +126,8 @@ void employee_program() {
         }
     }
 }
-void main() {
+int main() {
     employee_program();
 
+    return 0;
 }
