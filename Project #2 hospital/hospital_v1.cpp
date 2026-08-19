@@ -42,30 +42,29 @@ void addNewPatient() {
     cout<<"Added patient in specialization: "<<spec<<"\n";
 }
 
-
-void PrintAllPatients()
-{
-   
-    for(int spec = 1;spec<=SPECILIZATION;spec++)
-    {
-        if(added[spec] >= 1)
-        {
-            cout<<"There are "<<added[spec]<<" patients in specilization "<<spec<<"\n";
-            for(int queue = 0;queue<added[spec];queue++)
-                {
-                    cout<<names[spec][queue]<<" ";
-                    if(statiss[spec][queue] == 0)
-                    {
-                        cout<<"Regular\n";
-                    }
-                    else
-                    {
-                        cout<<"Urgent\n";
-                    }
-
-                }
+void printSpecializationPatient(string names[],int statistics[], int size) {
+    for (int i = 0; i < size; i++) {
+        cout<<names[i]<<" ";
+        if (statistics[i] == 0) {
+            cout<<"regular\n";
         }
-        
+        else {
+            cout<<"urgent\n";
+        }
+    }
+}
+void printAllPatients() {
+
+    cout<<"***********************************\n";
+
+    for (int specialization = 1; specialization < SPECILIZATION+1; specialization++) {
+
+        if (added[specialization] == 0)
+            continue;
+
+        cout<<"There are "<<added[specialization]<<" patients in specialization "<<specialization<<"\n";
+        printSpecializationPatient(names[specialization],statistics[specialization],added[specialization]);
+
     }
 }
 
